@@ -10,6 +10,31 @@ Author URI: http://pedroelsner.com/
 */
 
 
+class FullBreadcrumb {
+
+    var $_options = array(
+        'label' => array(
+            'home'   => 'Home',
+            'page'   => 'Page',
+            'search' => 'Searching for',
+            'author' => 'Published by',
+            '404'    => 'Error 404: Page not found'
+        ),
+        'separator' => array(
+            'element' => 'span',
+            'class'   => 'separator',
+            'content' => '›'
+        )
+    );
+
+    public function __construct($options = array()) {
+        $this->_options = array_merge($this->_options, $options);
+
+    }
+
+}
+
+
 /**
  * Display breadcrumb
  *
