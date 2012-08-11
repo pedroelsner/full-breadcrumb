@@ -10,9 +10,19 @@ Author URI: http://pedroelsner.com/
 */
 
 
+/**
+ * Full Breadcrumb
+ */
 class FullBreadcrumb {
 
-    var $_options = array(
+    /**
+     * Default options
+     * 
+     * @var array
+     * @access protected
+     * @since 1.0
+     */
+    protected $_options = array(
         'label' => array(
             'home'   => 'Home',
             'page'   => 'Page',
@@ -24,15 +34,141 @@ class FullBreadcrumb {
             'element' => 'span',
             'class'   => 'separator',
             'content' => '›'
+        ),
+        'homePage' => array(
+            'showLink' => false,
+            'element'  => 'span',
+            'class'    => 'homePage'
+        ),
+        'thisPage' => array(
+            'element' => 'span',
+            'class'   => 'thisPage'
         )
     );
 
+    /**
+     * Store elements HTML
+     * 
+     * @var array
+     * @access protected
+     * @since 1.0
+     */
+    protected $_elements = array();
+
+    /**
+     * Save breadcrumb created
+     * 
+     * @var string
+     * @access private
+     * @since 1.0
+     */
+    protected $_breadcrumb;
+
+    /**
+     * Construct
+     * 
+     * @param array $options Custom options
+     * @access public
+     * @since 1.0
+     */
     public function __construct($options = array()) {
         $this->_options = array_merge($this->_options, $options);
 
+        $this->_elements['separator'] = sprintf(' <%s class="%s">%s</%s> ',
+                                                $this->_options['separator']['element'],
+                                                $this->_options['separator']['class'],
+                                                $this->_options['separator']['content'],
+                                                $this->_options['separator']['element']);
+
+        $this->_elements['homePage_before'] = sprintf('<%s class="%s">',
+                                                $this->_options['homePage']['element'],
+                                                $this->_options['homePage']['class']);
+
+        $this->_elements['homePage_after'] = sprintf('</%s>', $this->_options['homePage']['element']);
+
+        $this->_elements['thisPage_before'] = sprintf('<%s class="%s">',
+                                                        $this->_options['thisPage']['element'],
+                                                        $this->_options['thisPage']['class']);
+
+        $this->_elements['thisPage_after'] = sprintf('</%s>', $this->_options['thisPage']['element']);
+    }
+
+    /**
+     * Make breadcrumb
+     * @return string
+     * @access public
+     * @since 1.0
+     */
+    public function getBreadcrumb() {
+        global $post;
+
+        if (!is_home() && !is_front_page() || is_paged()) {
+
+            $this->_breadcrumb = '<div id="breadcrumb">'
+                               . $this->_options['label']['home']
+                               . $this->_elements['separator'];
+
+            if (is_category()) {
+                $this->_category();
+            } elseif (is_day()) {
+                $this->_day();
+            } elseif (is_year()) {
+                $this->_year();
+            } elseif (is_single() && !is_attachment()) {
+                
+            }
+
+            $this->_breadcrumb .= '</div>';
+        }
+
+    }
+
+    
+    protected function _category() {
+        global $wp_query;
+
+        $obj            = $wp_query->get_queried_object();        
+        $category       = get_category($obj->term_id);
+        $parentCategory = get_category($category->parent);
+            
+        if ($category->parent != 0) {
+            $this->_breadcrumb = get_category_parents($parentCategory, true, $this->_elements['separator']);
+        }
+
+        $this->_breadcrumb = $this->_elements['thisPage_before']
+                           . single_cat_title('', false)
+                           . $this->_elements['thisPage_after'];
+    }
+
+    protected function _day() {
+        $this->_breadcrumb = get_the_time('Y')
+                           . $this->_elements['separator']
+                           . get_the_time('F')
+                           . $this->_elements['separator']
+                           . $this->_elements['thisPage_before']
+                           . get_the_time('d')
+                           . $this->_elements['thisPage_after'];
+    }
+
+    protected function _month() {
+        $this->_breadcrumb = get_the_time('Y')
+                           . $this->_elements['separator']
+                           . $this->_elements['thisPage_before']
+                           . get_the_time('F')
+                           . $this->_elements['thisPage_after'];
+    }
+
+    protected function _year() {
+        $this->_breadcrumb = $this->_elements['thisPage_before']
+                           . get_the_time('Y')
+                           . $this->_elements['thisPage_after'];   
     }
 
 }
+
+
+
+
 
 
 /**
