@@ -97,7 +97,7 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
 2. Search for "Full Breadcrumb".
 3. Click install.
 4. Click activate.
-5. Put this code <?php show_full_breadcrumb(); ?> in your theme and enjoy!
+5. Put this code <?php if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(); ?> in your theme and enjoy!
 
 See the [description tab](http://wordpress.org/extend/plugins/full-breadcrumb/screenshots/) to know how customize. the breadcrumb,
 
