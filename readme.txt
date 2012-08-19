@@ -15,13 +15,13 @@ Show breadcrumb in pages, posts, custom posts, categories, taxonomies, tags, aut
 
 = Basic Usage =
 
-Put this code <?php if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(); ?> in your theme and enjoy!
+Put this code `<?php if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(); ?>` in your theme and enjoy!
 
-Or, for to get the breadcrumb: <?php if (function_exists('get_full_breadcrumb')) $var = get_full_breadcrumb(); ?>
+Or, for to get the breadcrumb: `<?php if (function_exists('get_full_breadcrumb')) $var = get_full_breadcrumb(); ?>`
 
 = Basic Customization =
 
-<?php
+`<?php
 show_full_breadcrumb(
     array(
         'separator' => array(
@@ -32,11 +32,11 @@ show_full_breadcrumb(
         )
     )
 );
-?>
+?>`
 
 = Advanced Customization =
 
-<?php
+`<?php
 if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
     array(
         'labels' => array(
@@ -63,11 +63,11 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
         )
     )
 );
-?>
+?>`
 
 = Settings for Portuguese-BR =
 
-<?php
+`<?php
 if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
     array(
         'labels' => array(
@@ -89,7 +89,7 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
         )
     )
 );
-?>
+?>`
 
 == Installation ==
 
@@ -97,7 +97,7 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
 2. Search for "Full Breadcrumb".
 3. Click install.
 4. Click activate.
-5. Put this code <?php if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(); ?> in your theme and enjoy!
+5. Put this code `<?php if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(); ?>` in your theme and enjoy!
 
 See the [description tab](http://wordpress.org/extend/plugins/full-breadcrumb/screenshots/) to know how customize. the breadcrumb,
 
