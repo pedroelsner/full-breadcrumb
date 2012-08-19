@@ -2,7 +2,7 @@
 /*
 Plugin Name: Full Breadcrumb
 Plugin URI: https://github.com/pedroelsner/full-breadcrumb
-Description: *** Support hierarquical taxonomys *** Show breadcrumb for pages, posts, custom posts, categories, taxonomies, tags, authors, attachments and archives.
+Description: *** Support Hierarquical Taxonomies *** Show breadcrumb in pages, posts, custom posts, categories, taxonomies, tags, authors, attachments and archives.
 Usage: 
 Version: 1.0
 Author: Pedro Elsner
@@ -26,26 +26,32 @@ class FullBreadcrumb {
      */
     protected $_options = array(
         'labels' => array(
+            'local'  => 'You are here:',
             'home'   => 'Home',
             'page'   => 'Page',
             'tag'    => 'Tag',
             'search' => 'Searching for',
             'author' => 'Published by',
-            '404'    => 'Error 404: Page not found'
+            '404'    => 'Error 404 &rsaquo; Page not found'
         ),
         'separator' => array(
             'element' => 'span',
             'class'   => 'separator',
-            'content' => '›'
+            'content' => '&rsaquo;'
         ),
-        'homePage' => array(
-            'showLink' => false,
-            'element'  => 'span',
-            'class'    => 'homePage'
-        ),
-        'thisPage' => array(
+        'local' => array(
             'element' => 'span',
-            'class'   => 'thisPage'
+            'class'   => 'local'
+        ),
+        'home' => array(
+            'showLink'       => true,
+            'showBreadcrumb' => false,
+            'element'        => 'span',
+            'class'          => 'home'
+        ),
+        'actual' => array(
+            'element' => 'span',
+            'class'   => 'actual'
         )
     );
 
@@ -78,27 +84,46 @@ class FullBreadcrumb {
         $this->_options = array_merge($this->_options, $options);
         $this->_breadcrumb = '';
 
-        $this->_elements['separator'] = sprintf(' <%s class="%s">%s</%s> ',
+
+        $this->_elements['separator'] = sprintf('<%s class="%s">%s</%s>',
                                                 $this->_options['separator']['element'],
                                                 $this->_options['separator']['class'],
                                                 $this->_options['separator']['content'],
                                                 $this->_options['separator']['element']);
+        
 
-        $this->_elements['homePage_before'] = sprintf('<%s class="%s">',
-                                                $this->_options['homePage']['element'],
-                                                $this->_options['homePage']['class']);
+        $this->_elements['local'] = sprintf('<%s class="%s">%s</%s> ',
+                                                $this->_options['local']['element'],
+                                                $this->_options['local']['class'],
+                                                $this->_options['labels']['local'],
+                                                $this->_options['local']['element']);
 
-        $this->_elements['homePage_after'] = sprintf('</%s>', $this->_options['homePage']['element']);
+        $this->_elements['home_before'] = sprintf('<%s class="%s">',
+                                                $this->_options['home']['element'],
+                                                $this->_options['home']['class']);
 
-        $this->_elements['thisPage_before'] = sprintf('<%s class="%s">',
-                                                        $this->_options['thisPage']['element'],
-                                                        $this->_options['thisPage']['class']);
+        $this->_elements['home_after'] = sprintf('</%s>', $this->_options['home']['element']);
 
-        $this->_elements['thisPage_after'] = sprintf('</%s>', $this->_options['thisPage']['element']);
+        $this->_elements['actual_before'] = sprintf('<%s class="%s">',
+                                                        $this->_options['actual']['element'],
+                                                        $this->_options['actual']['class']);
+
+        $this->_elements['actual_after'] = sprintf('</%s>', $this->_options['actual']['element']);
+
+
+        if ($this->_options['separator']['element'] == 'span') {
+            $this->_elements['separator'] = sprintf(' %s ', $this->_elements['separator']);
+        }
+
+        if ($this->_options['local']['element'] == 'span') {
+            $this->_elements['local'] = sprintf('%s ', $this->_elements['local']);
+        }
+
     }
 
     /**
      * Make breadcrumb
+     * 
      * @return string
      * @access public
      * @since 1.0
@@ -106,58 +131,59 @@ class FullBreadcrumb {
     public function getBreadcrumb() {
         global $post;
 
-        if (!is_home() && !is_front_page() || is_paged()) {
-
-            $this->setBreadcrumb(
-                array(
-                    '<div id="breadcrumb">',
-                    $this->_options['labels']['home'],
-                    $this->_elements['separator'],
-                )
-            );
-
-            if (is_category()) {
-                $this->_category();
-            } elseif (is_day()) {
-                $this->_day();
-            } elseif (is_year()) {
-                $this->_year();
-            } elseif (is_single() && !is_attachment()) {
-                $this->_post();
-            } elseif (!is_single() && !is_page() && get_post_type() != 'post' && !is_404()) {
-                if (is_tax()) {
-                    $this->_archiveCustomPostType();
-                } else {
-                    $this->_archive();
-                }
-            } elseif (is_attachment()) {
-                $this->_attachment();
-            } elseif (is_page()) {
-                $this->_page();
-            } elseif (is_search()) {
-                $this->_search();
-            } elseif (is_tag()) {
-                $this->_tag();
-            } elseif (is_author()) {
-                $this->_author();
-            } elseif (is_404()) {
-                $this->_404();
+        if (is_home() && is_front_page()) {
+            if ($this->_options['home']['showBreadcrumb'] == false) {
+                return '';
             }
+        }
+        
 
+        $this->setBreadcrumb('<div id="breadcrumb">');
 
-            if ( get_query_var('paged') ) {
-                $this->setBreadcrumb(
-                    array(
-                        $this->_elements['separator'],
-                        $this->_options['labels']['page'],
-                        ' ' . get_query_var('paged'),
-                    )
-                );
+        $this->_local();
+        $this->_home();
+
+        if (is_category()) {
+            $this->_category();
+        } elseif (is_day()) {
+            $this->_day();
+        } elseif (is_year()) {
+            $this->_year();
+        } elseif (is_single() && !is_attachment()) {
+            $this->_post();
+        } elseif (!is_single() && !is_page() && get_post_type() != 'post' && !is_404()) {
+            if (is_tax()) {
+                $this->_archiveCustomPostType();
+            } else {
+                $this->_archive();
             }
-
-            $this->setBreadcrumb('</div>');
+        } elseif (is_attachment()) {
+            $this->_attachment();
+        } elseif (is_page()) {
+            $this->_page();
+        } elseif (is_search()) {
+            $this->_search();
+        } elseif (is_tag()) {
+            $this->_tag();
+        } elseif (is_author()) {
+            $this->_author();
+        } elseif (is_404()) {
+            $this->_404();
         }
 
+        if (get_query_var('paged')) {
+            $this->setBreadcrumb(
+                array(
+                    $this->_elements['separator'],
+                    $this->_options['labels']['page'],
+                    ' ' . get_query_var('paged'),
+                )
+            );
+        }
+
+        $this->setBreadcrumb('</div>');
+
+        return $this->_breadcrumb;
     }
     
     /**
@@ -178,6 +204,44 @@ class FullBreadcrumb {
     }
 
     /**
+     * Local
+     * 
+     * @access protected
+     * @since 1.0
+     */
+    protected function _local() {
+        if ($this->_options['labels']['local']) {
+            $this->setBreadcrumb($this->_elements['local']);
+        }
+    }
+
+    /**
+     * Home
+     * 
+     * @access protected
+     * @since 1.0
+     */
+    protected function _home() {
+        if ($this->_options['home']['showLink'] == false) {
+            $this->setBreadcrumb(
+                array(
+                    $this->_options['labels']['home'],
+                    $this->_elements['separator'],
+                )
+            );
+        } else {
+            $this->setBreadcrumb(
+                array(
+                    '<a href="' . home_url() . '">',
+                    $this->_options['labels']['home'],
+                    '</a>',
+                    $this->_elements['separator'],
+                )
+            );
+        }
+    }
+    
+    /**
      * Category
      * 
      * @access protected
@@ -196,9 +260,9 @@ class FullBreadcrumb {
 
         $this->setBreadcrumb(
             array(
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 single_cat_title('', false),
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -216,9 +280,9 @@ class FullBreadcrumb {
                 $this->_elements['separator'],
                 get_the_time('F'),
                 $this->_elements['separator'],
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 get_the_time('d'),
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -234,9 +298,9 @@ class FullBreadcrumb {
             array(
                 get_the_time('Y'),
                 $this->_elements['separator'],
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 get_the_time('F'),
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -250,9 +314,9 @@ class FullBreadcrumb {
     protected function _year() {
         $this->setBreadcrumb(
             array(
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 get_the_time('Y'),
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -265,22 +329,40 @@ class FullBreadcrumb {
      */
     protected function _post() {
         global $post;
+
+        if (get_post_type() != 'post' ){
+                $post_type = get_post_type_object(get_post_type());
+                if(get_post_type_archive_link($post_type->name)) {
+                    $this->setBreadcrumb(
+                        array(
+                            '<a href="' . get_post_type_archive_link($post_type->name) . '" title="' . $post_type->labels->menu_name . '">',
+                            $post_type->labels->menu_name,
+                            '</a>',
+                        )
+                    );
+                } else {
+                    $this->setBreadcrumb($post_type->labels->menu_name);
+                }
+                $this->setBreadcrumb($this->_elements['separator']);
+        }
+
         $taxonomies = get_post_taxonomies($post->ID);
-        foreach($taxonomies as $taxonomy) {
-            $objTaxonomy = get_taxonomy($taxonomy);
-            if(is_taxonomy_hierarchical($objTaxonomy)) {
-                foreach (wp_get_object_terms($post->ID, $taxonomy) as $term) {
-                    $this->setBreadcrumb('<a href="' . get_term_link($term->slug, $taxonomy) . '" title="' . $term->name . '">' . $term->name . '</a> ');
+        if (count($taxonomies) > 0) {
+            foreach($taxonomies as $taxonomy) {
+                if(is_taxonomy_hierarchical($taxonomy)) {
+                    foreach (wp_get_object_terms($post->ID, $taxonomy) as $term) {
+                        $this->setBreadcrumb('<a href="' . get_term_link($term->slug, $taxonomy) . '" title="' . $term->name . '">' . $term->name . '</a> ');
+                    }
+                    $this->setBreadcrumb($this->_elements['separator']);
                 }
             }
         }
 
         $this->setBreadcrumb(
             array(
-                $this->_elements['separator'],
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 get_the_title(),
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -306,9 +388,9 @@ class FullBreadcrumb {
                 $this->_elements['separator'],
                 $taxonomy->label,
                 $this->_elements['separator'],
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 $term->name,
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -323,9 +405,9 @@ class FullBreadcrumb {
         $post_type = get_post_type_object(get_post_type());
         $this->setBreadcrumb(
             array(
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 $post_type->labels->menu_name,
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -341,17 +423,18 @@ class FullBreadcrumb {
 
         $parent = get_post($post->post_parent);
         $categories = get_the_category($parent->ID);
-        foreach ($categories as $category) {
-            $this->setBreadcrumb(get_category_parents($category, TRUE, $this->_elements['separator']));
+        if (count($categories) > 0) {
+            foreach ($categories as $category) {
+                $this->setBreadcrumb(get_category_parents($category, TRUE, $this->_elements['separator']));
+            }
+            $this->setBreadcrumb($this->_elements['separator']);
         }
         
         $this->setBreadcrumb(
             array(
-                $parent->post_title,
-                $this->_elements['separator'],
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 get_the_title(),
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -365,12 +448,24 @@ class FullBreadcrumb {
     protected function _page() {
         global $post;
 
+        $taxonomies = get_post_taxonomies($post->ID);
+        if (count($taxonomies) > 0) {
+            foreach($taxonomies as $taxonomy) {
+                if(is_taxonomy_hierarchical($taxonomy)) {
+                    foreach (wp_get_object_terms($post->ID, $taxonomy) as $term) {
+                        $this->setBreadcrumb('<a href="' . get_term_link($term->slug, $taxonomy) . '" title="' . $term->name . '">' . $term->name . '</a> ');
+                    }
+                    $this->setBreadcrumb($this->_elements['separator']);
+                }
+            }
+        }
+
         if (!$post->post_parent) {
             $this->setBreadcrumb(
                 array(
-                    $this->_elements['thisPage_before'],
+                    $this->_elements['actual_before'],
                     get_the_title(),
-                    $this->_elements['thisPage_after'],
+                    $this->_elements['actual_after'],
                 )
             );
             return;
@@ -395,9 +490,9 @@ class FullBreadcrumb {
 
         $this->setBreadcrumb(
             array(
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 get_the_title(),
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -411,10 +506,10 @@ class FullBreadcrumb {
     protected function _search() {
         $this->setBreadcrumb(
             array(
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 $this->_options['labels']['search'],
-                ' `' . get_search_query() . '´',
-                $this->_elements['thisPage_after'],
+                ' &lsquo;' . get_search_query() . '&rsquo;',
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -428,10 +523,10 @@ class FullBreadcrumb {
     protected function _tag() {
         $this->setBreadcrumb(
             array(
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 $this->_options['labels']['tag'],
-                ' `' . single_tag_title('', false) . '´',
-                $this->_elements['thisPage_after'],
+                ' &lsquo;' . single_tag_title('', false) . '&rsquo;',
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -448,10 +543,10 @@ class FullBreadcrumb {
         $userdata = get_userdata($author);
         $this->setBreadcrumb(
             array(
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 $this->_options['labels']['author'],
                 ' ' . $userdata->display_name,
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -465,9 +560,9 @@ class FullBreadcrumb {
     protected function _404() {
         $this->setBreadcrumb(
             array(
-                $this->_elements['thisPage_before'],
+                $this->_elements['actual_before'],
                 $this->_options['labels']['404'],
-                $this->_elements['thisPage_after'],
+                $this->_elements['actual_after'],
             )
         );
     }
@@ -481,7 +576,7 @@ class FullBreadcrumb {
  * @access public
  * @since 1.0
  */
-function showFullBreadcrumb($settings = array()) {
+function show_full_breadcrumb($settings = array()) {
     $breadcrumb = new FullBreadcrumb($settings);
     echo $breadcrumb->getBreadcrumb();
 }
@@ -494,7 +589,7 @@ function showFullBreadcrumb($settings = array()) {
  * @access public
  * @since 1.0
  */
-function getFullBreadcrumb($settings = array()) {
+function get_full_breadcrumb($settings = array()) {
     $breadcrumb = new FullBreadcrumb($settings);
     return $breadcrumb->getBreadcrumb();
 }
