@@ -84,13 +84,15 @@ class FullBreadcrumb {
         $this->_options = array_merge($this->_options, $options);
         $this->_breadcrumb = '';
 
-
-        $this->_elements['separator'] = sprintf('<%s class="%s">%s</%s>',
-                                                $this->_options['separator']['element'],
-                                                $this->_options['separator']['class'],
-                                                $this->_options['separator']['content'],
-                                                $this->_options['separator']['element']);
-        
+        if($this->_options['separator'] === false) {
+            $this->_elements['separator'] = "";
+        } else {
+            $this->_elements['separator'] = sprintf('<%s class="%s">%s</%s>',
+                                                    $this->_options['separator']['element'],
+                                                    $this->_options['separator']['class'],
+                                                    $this->_options['separator']['content'],
+                                                    $this->_options['separator']['element']);
+        }
 
         $this->_elements['local'] = sprintf('<%s class="%s">%s</%s> ',
                                                 $this->_options['local']['element'],
