@@ -26,7 +26,7 @@ show_full_breadcrumb(
     array(
         'separator' => array(
             'content' => '&raquo;'
-        ),
+        ), // set FALSE to hide
         'home' => array(
             'showLink' => false
         )
@@ -52,7 +52,7 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
             'element' => 'span',
             'class'   => 'separator',
             'content' => '&rsaquo;'
-        ),
+        ), // set FALSE to hide
         'local' => array(
             'element' => 'span',
             'class'   => 'local'
@@ -83,7 +83,7 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
             'element' => 'span',
             'class'   => 'separator',
             'content' => '&rsaquo;'
-        ),
+        ), // set FALSE to hide
         'home' => array(
             'showLink' => true
         )
