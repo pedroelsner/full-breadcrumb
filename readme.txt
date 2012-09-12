@@ -60,6 +60,14 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
         'home' => array(
             'showLink'       => false,
             'showBreadcrumb' => true
+        ),
+        'actual' => array(
+            'element' => 'span',
+            'class'   => 'actual'
+        ),
+        'quote' => array(
+            'tag'    => true,
+            'search' => true
         )
     )
 );
