@@ -52,6 +52,10 @@ class FullBreadcrumb {
         'actual' => array(
             'element' => 'span',
             'class'   => 'actual'
+        ),
+        'quote' => array(
+            'tag'    => true,
+            'search' => true
         )
     );
 
@@ -510,7 +514,7 @@ class FullBreadcrumb {
             array(
                 $this->_elements['actual_before'],
                 $this->_options['labels']['search'],
-                ' &lsquo;' . get_search_query() . '&rsquo;',
+                $this->_options['quote']['search'] ? ' &lsquo;' . get_search_query() . '&rsquo;' : get_search_query(),
                 $this->_elements['actual_after'],
             )
         );
@@ -527,7 +531,7 @@ class FullBreadcrumb {
             array(
                 $this->_elements['actual_before'],
                 $this->_options['labels']['tag'],
-                ' &lsquo;' . single_tag_title('', false) . '&rsquo;',
+                $this->_options['quote']['tag'] ? ' &lsquo;' . single_tag_title('', false) . '&rsquo;' : single_tag_title('', false),
                 $this->_elements['actual_after'],
             )
         );
