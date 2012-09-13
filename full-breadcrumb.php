@@ -25,6 +25,7 @@ class FullBreadcrumb {
      * @since 1.0
      */
     protected $_options = array(
+        'type' => 'string',
         'labels' => array(
             'local'  => 'You are here:',
             'home'   => 'Home',
@@ -76,6 +77,24 @@ class FullBreadcrumb {
      * @since 1.0
      */
     protected $_breadcrumb;
+
+    /**
+     * Save breadcrumb created
+     * 
+     * @var array
+     * @access private
+     * @since 1.0
+     */
+    protected $_array;
+
+    /**
+     * Save the called method (eg. show or get)
+     * 
+     * @var string
+     * @access private
+     * @since 1.0
+     */
+    protected $_method;
 
     /**
      * Construct
@@ -134,8 +153,10 @@ class FullBreadcrumb {
      * @access public
      * @since 1.0
      */
-    public function getBreadcrumb() {
+    public function getBreadcrumb($method) {
         global $post;
+
+        $this->_method = $method;
 
         if (is_home() && is_front_page()) {
             if ($this->_options['home']['showBreadcrumb'] == false) {
@@ -143,8 +164,9 @@ class FullBreadcrumb {
             }
         }
         
-
-        $this->setBreadcrumb('<div id="breadcrumb">');
+        if($this->_method == 'get' && $this->_options['type'] == 'string') {
+            $this->setBreadcrumb('<div id="breadcrumb">');
+        }
 
         $this->_local();
         $this->_home();
@@ -187,9 +209,16 @@ class FullBreadcrumb {
             );
         }
 
-        $this->setBreadcrumb('</div>');
+        if($this->_method == 'get' && $this->_options['type'] == 'string') {
+            $this->setBreadcrumb('</div>');
+        }
 
-        return $this->_breadcrumb;
+        if($this->_method == 'get' && $this->_options['type'] == 'array') {
+            return $this->_array;
+        } else {
+            return $this->_breadcrumb;
+        }
+        
     }
     
     /**
@@ -201,11 +230,16 @@ class FullBreadcrumb {
      */
     public function setBreadcrumb($local) {
         if (is_array($local)) {
-            foreach ($local as $value) {
-                $this->_breadcrumb .= $value;
+            if($this->_method == 'get' && $this->_options['type'] == 'array') {
+                $this->_array[] = implode('', $local);
+            } else {
+                foreach ($local as $value) {
+                    $this->_breadcrumb .= $value;
+                }
             }
         } else {
             $this->_breadcrumb .= $local;
+            $this->_array[] = $local;
         }
     }
 
@@ -584,7 +618,7 @@ class FullBreadcrumb {
  */
 function show_full_breadcrumb($settings = array()) {
     $breadcrumb = new FullBreadcrumb($settings);
-    echo $breadcrumb->getBreadcrumb();
+    echo $breadcrumb->getBreadcrumb('show');
 }
 
 /**
@@ -597,7 +631,7 @@ function show_full_breadcrumb($settings = array()) {
  */
 function get_full_breadcrumb($settings = array()) {
     $breadcrumb = new FullBreadcrumb($settings);
-    return $breadcrumb->getBreadcrumb();
+    return $breadcrumb->getBreadcrumb('get');
 }
 
  
