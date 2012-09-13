@@ -391,6 +391,14 @@ class FullBreadcrumb {
             foreach($taxonomies as $taxonomy) {
                 if(is_taxonomy_hierarchical($taxonomy)) {
                     foreach (wp_get_object_terms($post->ID, $taxonomy) as $term) {
+                        if($term->taxonomy == 'category') {
+                            foreach(explode('|', get_category_parents($term->term_id, false, '|', true)) as $ancestor) {
+                                if(trim($ancestor) && $ancestor != $term->slug) {
+                                    $ancestor = get_category_by_slug($ancestor);
+                                    $this->setBreadcrumb('<a href="' . get_term_link($ancestor->slug, $taxonomy) . '" title="' . $ancestor->name . '">' . $ancestor->name . '</a> ');
+                                }
+                            }
+                        }
                         $this->setBreadcrumb('<a href="' . get_term_link($term->slug, $taxonomy) . '" title="' . $term->name . '">' . $term->name . '</a> ');
                     }
                     $this->setBreadcrumb($this->_elements['separator']);
