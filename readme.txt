@@ -19,6 +19,8 @@ Put this code `<?php if (function_exists('show_full_breadcrumb')) show_full_brea
 
 Or, for to get the breadcrumb: `<?php if (function_exists('get_full_breadcrumb')) $var = get_full_breadcrumb(); ?>`
 
+In `get_full_breadcrumb` you can use the additional parameter `'type' => 'array'` to return an array with the links. eg. `array( 'type' => 'array' )`
+
 = Basic Customization =
 
 `<?php
