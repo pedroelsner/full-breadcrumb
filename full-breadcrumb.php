@@ -4,7 +4,7 @@ Plugin Name: Full Breadcrumb
 Plugin URI: https://github.com/pedroelsner/full-breadcrumb
 Description: *** Support Hierarquical Taxonomies *** Show breadcrumb in pages, posts, custom posts, categories, taxonomies, tags, authors, attachments and archives.
 Usage: 
-Version: 1.0
+Version: 1.1
 Author: Pedro Elsner
 Author URI: http://pedroelsner.com/
 */
@@ -83,7 +83,7 @@ class FullBreadcrumb {
      * 
      * @var array
      * @access private
-     * @since 1.0
+     * @since 1.1
      */
     protected $_array;
 
@@ -92,7 +92,7 @@ class FullBreadcrumb {
      * 
      * @var string
      * @access private
-     * @since 1.0
+     * @since 1.1
      */
     protected $_method;
 
@@ -179,12 +179,6 @@ class FullBreadcrumb {
             $this->_year();
         } elseif (is_single() && !is_attachment()) {
             $this->_post();
-        } elseif (!is_single() && !is_page() && get_post_type() != 'post' && !is_404()) {
-            if (is_tax()) {
-                $this->_archiveCustomPostType();
-            } else {
-                $this->_archive();
-            }
         } elseif (is_attachment()) {
             $this->_attachment();
         } elseif (is_page()) {
@@ -197,6 +191,12 @@ class FullBreadcrumb {
             $this->_author();
         } elseif (is_404()) {
             $this->_404();
+        } elseif (!is_single() && !is_page() && get_post_type() != 'post' && !is_404()) {
+            if (is_tax()) {
+                $this->_archiveCustomPostType();
+            } else {
+                $this->_archive();
+            }
         }
 
         if (get_query_var('paged')) {
