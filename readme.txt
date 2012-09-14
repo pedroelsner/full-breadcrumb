@@ -1,7 +1,7 @@
 === Full Breadcrumb ===
 Contributors: Pedro Elsner
 Requires at least: 2.8
-Tested up to: 3.4.1
+Tested up to: 3.4.2
 Stable tag: trunk
 Tags: breadcrumb, breadcrumb for custom posts, breadcrumb support taxonomy, taxonomy hierarquical
 
@@ -117,7 +117,13 @@ See the [description tab](http://wordpress.org/extend/plugins/full-breadcrumb/sc
 
 == Changelog ==
 
+= 1.1 =
+* Bug correction. Breaks on author without published posts.
+* Include all category hierarchy of the post.
+* Added a option to return as array.
+* Added a option to disable the quotes in search and tags.
+* Added a option to hide the separator.
 = 1.0 =
-* First revision
+* First revision.
 
 == Upgrade Notice ==
