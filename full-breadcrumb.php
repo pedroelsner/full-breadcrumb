@@ -295,7 +295,13 @@ class FullBreadcrumb {
         $parentCategory = get_category($category->parent);
             
         if ($category->parent != 0) {
-            $this->setBreadcrumb(get_category_parents($parentCategory, true, $this->_elements['separator']));
+            if($this->_method == 'get' && $this->_options['type'] == 'array') {
+                foreach(explode('|', get_category_parents($parentCategory, true, '|')) as $parent) {
+                    $this->setBreadcrumb($parent);
+                }
+            } else {
+                $this->setBreadcrumb(get_category_parents($parentCategory, true, $this->_elements['separator']));
+            }
         }
 
         $this->setBreadcrumb(
