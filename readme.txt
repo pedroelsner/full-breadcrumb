@@ -1,5 +1,5 @@
 === Full Breadcrumb ===
-Contributors: Pedro Elsner and Kleber Kihara
+Contributors: Pedro Elsner, musashinm
 Requires at least: 2.8
 Tested up to: 3.4.2
 Stable tag: trunk
