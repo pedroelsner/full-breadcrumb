@@ -1,5 +1,5 @@
 === Full Breadcrumb ===
-Contributors: Pedro Elsner
+Contributors: Pedro Elsner, musashinm
 Requires at least: 2.8
 Tested up to: 3.4.2
 Stable tag: trunk
@@ -113,7 +113,7 @@ See the [description tab](http://wordpress.org/extend/plugins/full-breadcrumb/sc
 
 == Screenshots ==
 
-1. The Full Breadcrumb in my website =)
+1. The Full Breadcrumb in my (Pedro Elsner) website =)
 
 == Changelog ==
 
@@ -123,6 +123,7 @@ See the [description tab](http://wordpress.org/extend/plugins/full-breadcrumb/sc
 * Added a option to return as array.
 * Added a option to disable the quotes in search and tags.
 * Added a option to hide the separator.
+
 = 1.0 =
 * First revision.
 
