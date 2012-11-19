@@ -57,6 +57,9 @@ class FullBreadcrumb {
         'quote' => array(
             'tag'    => true,
             'search' => true
+        ),
+        'page_ancestors' => array(
+            'showLink' => false
         )
     );
 
@@ -535,7 +538,12 @@ class FullBreadcrumb {
         $pages = array();
         while ($parent_id) {
             $page = get_page($parent_id);
-            $pages[] = '' . get_the_title($page->ID) . '';
+            if($this->_options['page_ancestors']['showLink']) {
+                $page_name = get_the_title($page->ID);
+                $pages[] = '<a title="' . $page_name . '" href="' . get_permalink($page->ID) . '">' . $page_name . '</a>';
+            } else {
+                $pages[] = '' . get_the_title($page->ID) . '';
+            }
             $parent_id = $page->post_parent;
         }
         $pages = array_reverse($pages);
