@@ -118,6 +118,7 @@ See the [description tab](http://wordpress.org/extend/plugins/full-breadcrumb/sc
 == Changelog ==
 
 = 1.2 =
+* Added a option to enable links to page's acestors.
 * Added a option to disable the element in actual.
 * Bug correction. Returns a empty register in array.
 = 1.1 =
