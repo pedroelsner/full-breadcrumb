@@ -70,6 +70,9 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
         'quote' => array(
             'tag'    => true,
             'search' => true
+        ),
+        'page_ancestors' => array(
+            'showLink' => false
         )
     )
 );
