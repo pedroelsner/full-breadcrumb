@@ -1,5 +1,5 @@
 === Full Breadcrumb ===
-Contributors: Pedro Elsner, musashinm
+Contributors: Pedro Elsner, Kleber Kihara (musashinm)
 Requires at least: 2.8
 Tested up to: 3.4.2
 Stable tag: trunk
@@ -66,7 +66,7 @@ if (function_exists('show_full_breadcrumb')) show_full_breadcrumb(
         'actual' => array(
             'element' => 'span',
             'class'   => 'actual'
-        ),
+        ), // set FALSE to hide
         'quote' => array(
             'tag'    => true,
             'search' => true
@@ -117,6 +117,9 @@ See the [description tab](http://wordpress.org/extend/plugins/full-breadcrumb/sc
 
 == Changelog ==
 
+= 1.2 =
+* Added a option to disable the element in actual.
+* Bug correction. Returns a empty register in array.
 = 1.1 =
 * Bug correction. Breaks on author without published posts.
 * Include all category hierarchy of the post.
