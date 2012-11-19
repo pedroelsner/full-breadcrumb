@@ -4,7 +4,7 @@ Plugin Name: Full Breadcrumb
 Plugin URI: https://github.com/pedroelsner/full-breadcrumb
 Description: *** Support Hierarquical Taxonomies *** Show breadcrumb in pages, posts, custom posts, categories, taxonomies, tags, authors, attachments and archives.
 Usage: 
-Version: 1.1
+Version: 1.2
 Author: Pedro Elsner
 Author URI: http://pedroelsner.com/
 */
@@ -129,11 +129,15 @@ class FullBreadcrumb {
 
         $this->_elements['home_after'] = sprintf('</%s>', $this->_options['home']['element']);
 
-        $this->_elements['actual_before'] = sprintf('<%s class="%s">',
-                                                        $this->_options['actual']['element'],
-                                                        $this->_options['actual']['class']);
-
-        $this->_elements['actual_after'] = sprintf('</%s>', $this->_options['actual']['element']);
+        if($this->_options['actual']) {
+            $this->_elements['actual_before'] = sprintf('<%s class="%s">',
+                                                            $this->_options['actual']['element'],
+                                                            $this->_options['actual']['class']);
+            $this->_elements['actual_after'] = sprintf('</%s>', $this->_options['actual']['element']);
+        } else {
+            $this->_elements['actual_before'] = "";
+            $this->_elements['actual_after'] = "";
+        }
 
 
         if ($this->_options['separator']['element'] == 'span') {
@@ -229,17 +233,19 @@ class FullBreadcrumb {
      * @since 1.0
      */
     public function setBreadcrumb($local) {
-        if (is_array($local)) {
-            if($this->_method == 'get' && $this->_options['type'] == 'array') {
-                $this->_array[] = implode('', $local);
-            } else {
-                foreach ($local as $value) {
-                    $this->_breadcrumb .= $value;
+        if($local) {
+            if (is_array($local)) {
+                if($this->_method == 'get' && $this->_options['type'] == 'array') {
+                    $this->_array[] = implode('', $local);
+                } else {
+                    foreach ($local as $value) {
+                        $this->_breadcrumb .= $value;
+                    }
                 }
+            } else {
+                $this->_breadcrumb .= $local;
+                $this->_array[] = $local;
             }
-        } else {
-            $this->_breadcrumb .= $local;
-            $this->_array[] = $local;
         }
     }
 
@@ -647,6 +653,3 @@ function get_full_breadcrumb($settings = array()) {
     $breadcrumb = new FullBreadcrumb($settings);
     return $breadcrumb->getBreadcrumb('get');
 }
-
- 
-?>
